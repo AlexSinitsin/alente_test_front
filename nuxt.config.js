@@ -10,9 +10,11 @@ module.exports = {
       { hid: 'description', name: 'description', content: 'Nuxt.js project' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap'}
     ]
   },
+  modules: ['bootstrap-vue/nuxt'],
   /*
   ** Customize the progress bar color
   */
@@ -21,6 +23,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    vendor: ['axios'],
     /*
     ** Run ESLint on save
     */
