@@ -1,51 +1,20 @@
 <template>
   <div class="slide" >
-    <div class="param">{{leftX + ' - ' + value(false)}}</div>
-    <div class="wrapper">
-      <div class="back">
-        <div class="input leftInput" v-on:mousedown="move" :style="position('left')"></div>
-        <div class="input rightInput" v-on:mousedown="updateSlider" :style="position('right')"></div>
-      </div>
-    </div>
+   
   </div>
 </template>
 
 <script>
-  export default {
-    computed: {
-      leftX() {
-        return this.$store.state.slider.X;
-      }
+
+import Slider from '@vueform/slider/dist/slider.vue2.js'
+ export default {
+    components: {
+      Slider,
     },
-    methods: {
-      position(n) {
-        return n + ': ' + this.$store.state.slider.X + 'px';
-      },
-      value(n) {
-        const range = this.$store.state.slider.max - this.$store.state.slider.min;
-        const Stap = Math.ceil(100 / range)
-        return n ? this.$store.state.slider.min + Math.ceil(this.$store.state.slider.X / Stap) : this.$store.state
-          .slider.max + Math.ceil(this.$store.state.slider.X / Stap)
-      },
-      updateSlider(event) {
-        const x = event.pageX
-        console.log(event.pageX)
-        this.$store.commit('updateSlider', x)
-        this.$store.commit('updateProducts')
-      },
-      updateXSlider(event) {
-        const x = event.pageX - this.$store.state.slider.defaultX
-        console.log('#' + x)
-        this.$store.commit('updateXSlider', x)
-        this.$store.commit('updateProducts')
-      },
-      move (e) {
-    	e.target.addEventListener('mousemove', function(e) {
-            const x = e.pageX
-        console.log(e.pageX)
-        this.$store.commit('updateSlider', x)
-        })
-    }
+    data() {
+      return {
+        value: 20
+      }
     }
   }
 

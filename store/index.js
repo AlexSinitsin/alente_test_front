@@ -3,6 +3,9 @@ import {
 } from 'lodash';
 import Vuex from 'vuex'
 var _ = require('lodash');
+import Vue from 'vue'
+import VueCompositionAPI from '@vue/composition-api'
+Vue.use(VueCompositionAPI)
 
 const createStore = () => {
   return new Vuex.Store({
