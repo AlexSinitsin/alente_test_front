@@ -10,6 +10,7 @@
     methods: {
       updateSelect(param) {
         this.$store.commit('updateSelect', param)
+        this.$store.commit('updateProducts')
       },
     }
   }

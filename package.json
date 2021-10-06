@@ -1,6 +1,11 @@
 {
   "name": "alente_test_front",
   "version": "1.0.0",
+  "configurations": [{
+    "request": "launch",
+    "name": "Launch Chrome against localhost",
+    "type": "dart"
+  }],
   "description": "Nuxt.js project",
   "author": "Alex Sinitsin <workbigbox@yandex.ru>",
   "private": true,

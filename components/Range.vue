@@ -11,6 +11,7 @@
     methods: {
     updateCheckedRange(param) {
       this.$store.commit('updateCheckedRange', param.id)
+      this.$store.commit('updateProducts')
     },
     }
   }

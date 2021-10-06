@@ -31,11 +31,13 @@
         const x = event.pageX
         console.log(event.pageX)
         this.$store.commit('updateSlider', x)
+        this.$store.commit('updateProducts')
       },
       updateXSlider(event) {
         const x = event.pageX - this.$store.state.slider.defaultX
         console.log('#' + x)
         this.$store.commit('updateXSlider', x)
+        this.$store.commit('updateProducts')
       },
       move (e) {
     	e.target.addEventListener('mousemove', function(e) {

@@ -5,7 +5,7 @@
   </div>
   <div class="col-sm-12 col-xl-9">
     <SearchAndWatch />
-    <Products :page="1"/>
+    <Products :page="$route.params.id"/>
   </div>
   </div>
 </template>

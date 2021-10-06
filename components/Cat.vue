@@ -11,6 +11,7 @@
     methods: {
     updateCheckedCat(param) {
       this.$store.commit('updateCheckedCat', param.id)
+      this.$store.commit('updateProducts')
     },
     }
   }

@@ -1,3 +1,6 @@
+import {
+  filter
+} from 'lodash';
 import Vuex from 'vuex'
 var _ = require('lodash');
 
@@ -36,11 +39,19 @@ const createStore = () => {
         }
       ],
       brands: [],
+      pages: {
+        count: 0,
+        current: 1,
+      },
       categories: [],
       products: [],
       rating: [],
       filteredProducts: [],
-      search: { searcedProd: [], count: 0, searchRequest: ''},
+      search: {
+        searcedProd: [],
+        count: 0,
+        searchRequest: ''
+      },
       view: 'Tails',
       slider: {
         X: -10,
@@ -61,6 +72,58 @@ const createStore = () => {
       }]
     },
     mutations: {
+      updateSearch(state, search) {
+        state.filteredProducts = state.products;
+        state.search.searchRequest = search;
+
+        const lengthSearchRequest = state.search.searchRequest.length
+        const searchRequest = state.search.searchRequest.toLowerCase()
+        state.filteredProducts = state.filteredProducts
+          .filter(param => {
+            const title = param.title.toLowerCase().slice(0, lengthSearchRequest)
+            return title === searchRequest
+          })
+      },
+      updateProducts(state) {
+        const range = _.flatten(state.range
+          .filter(param => param.checked === 'checked')
+          .map(param => param.range))
+
+        let cat = state.categories
+          .filter(param => param.checked === 'checked')
+          .map(param => param.id)
+        if (!Boolean(cat.length)) {
+          cat = state.categories
+            .map(param => param.id)
+        }
+
+        let brand = state.brands
+          .filter(param => param.checked === 'checked')
+          .map(param => param.id)
+        if (!Boolean(brand.length)) {
+          brand = state.brands
+            .map(param => param.id)
+        }
+
+        const sortParam = _.flatten(state.select
+          .filter(param => param.checked === 'checked')
+          .map(param => param.sort))
+
+        state.filteredProducts = state.products
+          .filter(param => Number(param.price) >= range[0] && Number(param.price) <= range[1])
+          .filter(param => brand.indexOf(param.brandId) >= 0 ? true : false)
+          .filter(param => cat.indexOf(param.brandId) >= 0 ? true : false)
+
+        state.filteredProducts.sort(function (a, b) {
+          if (a[sortParam] > b[sortParam]) {
+            return 1;
+          }
+          if (a[sortParam] < b[sortParam]) {
+            return -1;
+          }
+          return 0;
+        });
+      },
       updateCheckedRange(state, id) {
         state.range
           .map(radio => {
@@ -69,45 +132,12 @@ const createStore = () => {
         state.range
           .filter(radio => radio.id === id)
           .map(radio => radio.checked = 'checked')
-
-        const range = _.flatten(state.range
-          .filter(param => param.checked === 'checked')
-          .map(param => param.range))
-
-        const cat = state.categories
-          .filter(param => param.checked === 'checked')
-          .map(param => param.id)
-
-        const brand = state.brands
-          .filter(param => param.checked === 'checked')
-          .map(param => param.id)
-
-        state.filteredProducts = state.products
-          .filter(param => Number(param.price) >= range[0] && Number(param.price) <= range[1])
-          .filter(param => _.has(brand, param.brandId))
-          .filter(param => _.has(cat, param.categoryId))
       },
       updateCheckedCat(state, id) {
         state.categories
           .filter(checkbox => checkbox.id === id)
           .map(checkbox => checkbox.checked = checkbox.checked === 'checked' ? 'no-checked' : 'checked')
 
-        const range = _.flatten(state.range
-          .filter(param => param.checked === 'checked')
-          .map(param => param.range))
-
-        const cat = state.categories
-          .filter(param => param.checked === 'checked')
-          .map(param => param.id)
-
-        const brand = state.brands
-          .filter(param => param.checked === 'checked')
-          .map(param => param.id)
-
-        state.filteredProducts = state.products
-          .filter(param => param.price >= range[0] && param.price <= range[1])
-          .filter(param => _.has(brand, param.brandId))
-          .filter(param => _.has(cat, param.categoryId))
       },
       updateCheckedBrand(state, id) {
 
@@ -115,22 +145,6 @@ const createStore = () => {
           .filter(checkbox => checkbox.id === id)
           .map(checkbox => checkbox.checked = checkbox.checked === 'checked' ? 'no-checked' : 'checked')
 
-        const range = _.flatten(state.range
-          .filter(param => param.checked === 'checked')
-          .map(param => param.range))
-
-        const cat = state.categories
-          .filter(param => param.checked === 'checked')
-          .map(param => param.id)
-
-        const brand = state.brands
-          .filter(param => param.checked === 'checked')
-          .map(param => param.id)
-
-        state.filteredProducts = state.products
-          .filter(param => param.price >= range[0] && param.price <= range[1])
-          .filter(param => _.has(brand, param.brandId))
-          .filter(param => _.has(cat, param.categoryId))
       },
       addBrand(state, param) {
         state.brands = param;
@@ -150,26 +164,15 @@ const createStore = () => {
 
       },
       addProd(state, param) {
-
         state.products = param;
-        for (let i = 5; i >= 1; i -= 1) {
-          state.rating.push({})
-          state.rating[5 - i].count = state.products
-            .filter(product => parseFloat(product.rating) <= i && parseFloat(product.rating) > i - 1).length
-          state.rating[5 - i].countStars = i;
-        }
-
+      },
+      updateNumbers(state) {
         state.filteredProducts = state.products;
 
-        state.filteredProducts.sort(function (a, b) {
-          if (a.price > b.price) {
-            return 1;
-          }
-          if (a.price < b.price) {
-            return -1;
-          }
-          return 0;
-        });
+        const length = Math.round(state.filteredProducts.length / 9)
+        
+        state.pages.count = length
+        console.log(state.pages.count )
 
         state.slider.min = state.filteredProducts[0].price
         state.slider.max = state.filteredProducts[state.filteredProducts.length - 1].price
@@ -197,6 +200,14 @@ const createStore = () => {
             param.count = brandCount;
             return param
           })
+          
+          state.rating = [];
+          for (let i = 5; i >= 1; i -= 1) {
+            state.rating.push({})
+            state.rating[5 - i].count = state.products
+              .filter(product => parseFloat(product.rating) <= i && parseFloat(product.rating) > i - 1).length
+            state.rating[5 - i].countStars = i;
+          }
       },
       updateSlider(state, x) {
         state.slider.defaultX = x;
@@ -208,17 +219,20 @@ const createStore = () => {
         state.view = view;
       },
       updateSelect(state, sort) {
-        console.log('uu')
         state.select
-        .map(param => {
-          param.checked = "no-checked"
-          return param
-        })
-        .filter(param => param.sort === sort)
-        .map(param => {
-          param.checked = 'checked'
-          return param
-        })
+          .map(param => {
+            param.checked = "no-checked"
+            return param
+          })
+          .filter(param => param.sort === sort)
+          .map(param => {
+            param.checked = 'checked'
+            return param
+          })
+      },
+      updatePageCurrent(state, n) {
+        state.pages.current = n
+        console.log(state.pages.current + "@")
       }
     }
   })
