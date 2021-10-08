@@ -1,51 +1,35 @@
 <template>
-  <div class="slide" >
-    <div class="param">{{leftX + ' - ' + value(false)}}</div>
+  <div class="slide">
+    <div class="param">{{' - '}}</div>
     <div class="wrapper">
-      <div class="back">
-        <div class="input leftInput" v-on:mousedown="move" :style="position('left')"></div>
-        <div class="input rightInput" v-on:mousedown="updateSlider" :style="position('right')"></div>
-      </div>
+      <input type="range" id="cowbell" name="cowbell" :min="minValue" :max="maxValue" value="90" step="1" v-model.number="min" @change="changeRange(min, max)">
+      <input type="range" id="cowbell" name="cowbell" :min="minValue" :max="maxValue"  value="90" step="1" v-model.number="max" @change="changeRange(min, max)">
     </div>
   </div>
 </template>
 
 <script>
   export default {
+    data() {
+      return {
+      min: this.$store.state.slider.min,
+      max: this.$store.state.slider.max
+      }
+    },
     computed: {
-      leftX() {
-        return this.$store.state.slider.X;
+      minValue() {
+        return this.$store.state.slider.min
+      },
+      maxValue() {
+        return this.$store.state.slider.max
       }
     },
     methods: {
-      position(n) {
-        return n + ': ' + this.$store.state.slider.X + 'px';
-      },
-      value(n) {
-        const range = this.$store.state.slider.max - this.$store.state.slider.min;
-        const Stap = Math.ceil(100 / range)
-        return n ? this.$store.state.slider.min + Math.ceil(this.$store.state.slider.X / Stap) : this.$store.state
-          .slider.max + Math.ceil(this.$store.state.slider.X / Stap)
-      },
-      updateSlider(event) {
-        const x = event.pageX
-        console.log(event.pageX)
-        this.$store.commit('updateSlider', x)
+        changeRange(min, max) {
+        this.$store.commit('updateSliderMin', min)
+        this.$store.commit('updateSliderMax', max)
         this.$store.commit('updateProducts')
-      },
-      updateXSlider(event) {
-        const x = event.pageX - this.$store.state.slider.defaultX
-        console.log('#' + x)
-        this.$store.commit('updateXSlider', x)
-        this.$store.commit('updateProducts')
-      },
-      move (e) {
-    	e.target.addEventListener('mousemove', function(e) {
-            const x = e.pageX
-        console.log(e.pageX)
-        this.$store.commit('updateSlider', x)
-        })
-    }
+        }
     }
   }
 
@@ -67,20 +51,63 @@
   }
 
   .wrapper {
-    width: 100%;
-    position: relative;
+  position: relative}
+
+  .slide input[type=range] {
     height: 10px;
-    top: 5px;
+    -webkit-appearance: none;
+    margin: 10px 0;
+    width: 100%;
+    padding-left: 0px;
+    position: absolute;
+  }
+
+  input[type=range]:focus {
+    outline: none;
+  }
+
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #6F64F8;
+    border-radius: 5px;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 30px;
+    background: #6F64F8;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -7px;
+    position: relative;
+    z-index: 1000;
+  }
+
+  input[type=range]:focus::-webkit-slider-runnable-track {
     background: #6F64F8;
   }
 
-  .input {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: -5px;
+  input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    animate: 0.2s;
+
     background: #6F64F8;
+    border-radius: 5px;
+  }
+
+  input[type=range]::-moz-range-thumb {
+    border: 0px;
+    height: 20px;
+    width: 20px;
     border-radius: 30px;
+    background: #6F64F8;
+    cursor: pointer;
   }
 
 </style>
