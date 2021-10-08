@@ -1,6 +1,6 @@
 <template>
   <div class="slide">
-    <div class="param">{{' - '}}</div>
+    <div class="param">{{min + ' - ' + max}}</div>
     <div class="wrapper">
       <input type="range" id="cowbell" name="cowbell" :min="minValue" :max="maxValue" value="90" step="1" v-model.number="min" @change="changeRange(min, max)">
       <input type="range" id="cowbell" name="cowbell" :min="minValue" :max="maxValue"  value="90" step="1" v-model.number="max" @change="changeRange(min, max)">
