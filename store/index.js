@@ -57,8 +57,9 @@ const createStore = () => {
       },
       view: 'Tails',
       slider: {
-        X: -10,
-        defaultX: 0
+        min: 0,
+        max: 0,
+        range: []
       },
       select: [{
         name: "Default",
@@ -66,7 +67,7 @@ const createStore = () => {
         checked: 'checked'
       }, {
         name: "Name",
-        sort: 'name',
+        sort: 'title',
         checked: 'no-checked'
       }, {
         name: "Price",
@@ -111,9 +112,10 @@ const createStore = () => {
         const sortParam = _.flatten(state.select
           .filter(param => param.checked === 'checked')
           .map(param => param.sort))
-
+          console.log(state.slider.range)
         state.filteredProducts = state.products
           .filter(param => Number(param.price) >= range[0] && Number(param.price) <= range[1])
+          .filter(param => Number(param.price) >= state.slider.range[0] && Number(param.price) <= state.slider.range[1])
           .filter(param => brand.indexOf(param.brandId) >= 0 ? true : false)
           .filter(param => cat.indexOf(param.brandId) >= 0 ? true : false)
 
@@ -177,8 +179,18 @@ const createStore = () => {
         state.pages.count = length
         console.log(state.pages.count )
 
+        state.filteredProducts.sort(function (a, b) {
+          if (a.price > b.price) {
+            return 1;
+          }
+          if (a.price < b.price) {
+            return -1;
+          }
+          return 0;
+        });
         state.slider.min = state.filteredProducts[0].price
         state.slider.max = state.filteredProducts[state.filteredProducts.length - 1].price
+        state.filteredProducts = state.products;
 
         state.range
           .map(param => {
@@ -212,12 +224,6 @@ const createStore = () => {
             state.rating[5 - i].countStars = i;
           }
       },
-      updateSlider(state, x) {
-        state.slider.defaultX = x;
-      },
-      updateXSlider(state, x) {
-        state.slider.X = state.slider.defaultX + x;
-      },
       currentView(state, view) {
         state.view = view;
       },
@@ -236,6 +242,12 @@ const createStore = () => {
       updatePageCurrent(state, n) {
         state.pages.current = n
         console.log(state.pages.current + "@")
+      },
+      updateSliderMin(state, min) {
+        state.slider.range[0]= min
+      },
+      updateSliderMax(state, max) {
+        state.slider.range[1]= max
       }
     }
   })
