@@ -56,7 +56,7 @@ const createStore = () => {
       slider: {
         min: 0,
         max: 0,
-        range: []
+        range: [22, 2599]
       },
       select: [{
         name: "Default",
@@ -89,6 +89,7 @@ const createStore = () => {
         const range = _.flatten(state.range
           .filter(param => param.checked === 'checked')
           .map(param => param.range))
+        console.log(range + '@@')
 
         let cat = state.categories
           .filter(param => param.checked === 'checked')
@@ -111,7 +112,7 @@ const createStore = () => {
           .map(param => param.sort))
           console.log(state.slider.range)
         state.filteredProducts = state.products
-          .filter(param => Number(param.price) >= range[0] && Number(param.price) <= range[1])
+          .filter(param =>Number(param.price) >= range[0] && Number(param.price) <= range[1])
           .filter(param => Number(param.price) >= state.slider.range[0] && Number(param.price) <= state.slider.range[1])
           .filter(param => brand.indexOf(param.brandId) >= 0 ? true : false)
           .filter(param => cat.indexOf(param.brandId) >= 0 ? true : false)
